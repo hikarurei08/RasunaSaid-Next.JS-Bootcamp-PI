@@ -1,0 +1,102 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+import { useUser } from "@/context/UserContext";
+import { useFavorite } from "@/context/FavoriteContext";
+
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/services", label: "Services" },
+  { href: "/profile", label: "Profile" },
+  { href: "/contact", label: "Contact" },
+  { href: "/users", label: "Users" },
+];
+
+export default function Navbar() {
+  const pathname = usePathname();
+
+  const { name, submitted } = useUser();
+  const { favorites } = useFavorite();
+
+  return (
+    <header className="sticky top-4 z-50 mx-auto w-full max-w-4xl px-4">
+      <nav className="flex items-center justify-between gap-4 rounded-full border border-white/10 bg-background/70 px-4 py-2 shadow-lg shadow-black/20 backdrop-blur-xl">
+
+        {/* Logo */}
+        <Link
+          href="/"
+          className="shrink-0 text-sm font-bold tracking-tight"
+        >
+          MyWebsite
+        </Link>
+
+        {/* Navigation */}
+        <div className="hidden items-center gap-1 text-sm text-muted-foreground sm:flex">
+          {links.map((link) => {
+            const isActive =
+              link.href === "/"
+                ? pathname === "/"
+                : pathname?.startsWith(link.href);
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "rounded-full px-3 py-1.5 transition-colors hover:text-foreground",
+                  isActive &&
+                    "bg-foreground/10 text-foreground"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
+          {/* Favorites */}
+          <Link
+            href="/favorites"
+            className={cn(
+              "flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors hover:text-foreground",
+              pathname?.startsWith("/favorites") &&
+                "bg-foreground/10 text-foreground"
+            )}
+          >
+            <span>Favorites</span>
+
+            {favorites.length > 0 && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
+                {favorites.length}
+              </span>
+            )}
+          </Link>
+        </div>
+
+        {/* User greeting + button */}
+        <div className="flex items-center gap-3">
+          {submitted && (
+            <span className="hidden text-sm md:inline-block">
+              Hi, {name} 👋
+            </span>
+          )}
+
+          <Link
+            href="/contact"
+            className={cn(
+              buttonVariants({ size: "sm" }),
+              "rounded-full"
+            )}
+          >
+            Get in touch
+          </Link>
+        </div>
+      </nav>
+    </header>
+  );
+} 

@@ -1,0 +1,89 @@
+import Link from "next/link";
+
+const columns = [
+  {
+    title: "Site",
+    links: [
+      { href: "/", label: "Home" },
+      { href: "/about", label: "About" },
+      { href: "/services", label: "Services" },
+    ],
+  },
+  {
+    title: "Connect",
+    links: [
+      { href: "/profile", label: "Profile" },
+      { href: "/contact", label: "Contact" },
+    ],
+  },
+];
+
+export default function Footer() {
+  return (
+    <footer className="relative mt-24 border-t border-border/50 bg-background text-foreground transition-colors">
+
+      {/* Accent Line */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
+
+      <div className="mx-auto max-w-6xl px-6 py-12">
+
+        <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
+
+          {/* Brand */}
+          <div className="max-w-xs">
+            <p className="text-lg font-bold">
+              RasunaSaid
+            </p>
+
+            <p className="mt-2 text-sm text-muted-foreground">
+              We help individuals and businesses build modern,
+              simple, and useful digital experiences.
+            </p>
+          </div>
+
+          {/* Navigation */}
+          <div className="grid grid-cols-2 gap-10 sm:flex sm:gap-16">
+            {columns.map((column) => (
+              <div key={column.title}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-foreground/80">
+                  {column.title}
+                </p>
+
+                <ul className="mt-3 space-y-2">
+                  {column.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Student Information */}
+        <div className="mt-10 border-t border-border/50 pt-6">
+          <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              © 2026 RasunaSaid. All rights reserved.
+            </p>
+
+            <p>
+              Built with Next.js &amp; Tailwind CSS.
+            </p>
+          </div>
+
+          <p className="mt-3 text-xs text-muted-foreground">
+            Nama: [Reikananta] · Kelompok: [Rasuna Said]
+          </p>
+        </div>
+
+      </div>
+    </footer>
+  );
+} 
