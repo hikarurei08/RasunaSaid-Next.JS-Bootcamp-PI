@@ -11,9 +11,31 @@ import {
 import { useFavorite } from "@/context/FavoriteContext";
 
 export default function UserCard({ user }) {
-  const { toggleFavorite, isFavorite } = useFavorite();
+  const {
+    favorites,
+    addFavorite,
+    removeFavorite,
+  } = useFavorite();
 
-  const favorite = isFavorite(user.id);
+  const favorite = favorites.some(
+    (item) => Number(item.id) === Number(user.id)
+  );
+
+  async function handleFavorite() {
+    try {
+      if (favorite) {
+        await removeFavorite(user.id);
+      } else {
+        await addFavorite({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <Card className="flex flex-col justify-between">
@@ -29,7 +51,7 @@ export default function UserCard({ user }) {
         </p>
 
         <p className="text-sm text-gray-500">
-          🏢 {user.company.name}
+          🏢 {user.company?.name}
         </p>
 
         <div className="flex gap-2 pt-2">
@@ -43,7 +65,7 @@ export default function UserCard({ user }) {
 
           {/* Favorite */}
           <Button
-            onClick={() => toggleFavorite(user)}
+            onClick={handleFavorite}
             variant={favorite ? "destructive" : "default"}
             className="flex-1"
           >
