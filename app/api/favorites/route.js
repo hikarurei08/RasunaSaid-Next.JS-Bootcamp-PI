@@ -1,77 +1,26 @@
-import { favorites } from "@/lib/db";
+import {
+  getAllFavorites,
+  addFavorite,
+} from "@/lib/services/favoriteService";
 
 export async function GET() {
-  return Response.json(favorites);
+  return Response.json(getAllFavorites());
 }
 
 export async function POST(request) {
-  let body;
+  const body = await request.json();
 
-  // Menangani request tanpa JSON / body yang benar
-  try {
-    body = await request.json();
-  } catch (error) {
+  const result = addFavorite(body);
+
+  if (!result.success) {
     return Response.json(
-      {
-        error: "Body request wajib diisi dalam format JSON",
-      },
-      {
-        status: 400,
-      }
+      { error: result.error },
+      { status: result.status }
     );
   }
 
-  if (!body || Object.keys(body).length === 0) {
-    return Response.json(
-      {
-        error: "Body request tidak boleh kosong",
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
-  const requiredFields = ["id", "name", "email"];
-
-  const missingFields = requiredFields.filter((field) => {
-    return (
-      body[field] === undefined ||
-      body[field] === null ||
-      body[field] === ""
-    );
-  });
-
-  if (missingFields.length > 0) {
-    return Response.json(
-      {
-        error: `Field ${missingFields.join(", ")} wajib diisi`,
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
-  const alreadyExists = favorites.some(
-    (favorite) => String(favorite.id) === String(body.id)
+  return Response.json(
+    result.data,
+    { status: result.status }
   );
-
-  if (alreadyExists) {
-    return Response.json(
-      {
-        error: "User ini sudah difavoritkan",
-      },
-      {
-        status: 400,
-      }
-    );
-  }
-
-  // Masukkan data ke array
-  favorites.push(body);
-
-  return Response.json(body, {
-    status: 201,
-  });
 } 

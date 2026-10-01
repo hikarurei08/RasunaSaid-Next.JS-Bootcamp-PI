@@ -1,4 +1,4 @@
-import { favorites } from "@/lib/db";
+import { removeFavorite } from "@/lib/services/favoriteService"; 
 
 // ========================================
 // PATCH
@@ -35,18 +35,18 @@ export async function PATCH(request, { params }) {
 export async function DELETE(request, { params }) {
   const { id } = await params;
 
-  const index = favorites.findIndex(
-    (favorite) => favorite.id === Number(id)
-  );
+  const numId = Number(id);
 
-  if (index === -1) {
+  const result = removeFavorite(numId);
+
+  if (!result.success) {
     return Response.json(
-      { error: "Data tidak ditemukan" },
-      { status: 404 }
+      { error: result.error },
+      { status: result.status }
     );
   }
 
-  const deleted = favorites.splice(index, 1);
-
-  return Response.json(deleted[0]);
+  return Response.json({
+    message: "Berhasil dihapus",
+  });
 } 
